@@ -1,3 +1,6 @@
+%bcond_without	avahi	# avahi/mdns
+%bcond_without	systemd	# systemd
+
 Summary:	Phodav - WebDAV server implementation using libsoup
 Summary(en.UTF-8):	Phởdav - WebDAV server implementation using libsoup
 Summary(pl.UTF-8):	Phởdav - implementacja serwera WebDAV wykorzystująca libsoup
@@ -11,8 +14,8 @@ Source0:	https://download.gnome.org/sources/phodav/3.0/phodav-%{version}.tar.xz
 URL:		https://wiki.gnome.org/phodav
 BuildRequires:	asciidoc
 BuildRequires:	attr-devel
-BuildRequires:	avahi-devel
-BuildRequires:	avahi-gobject-devel
+%{?with_avahi:BuildRequires:	avahi-devel}
+%{?with_avahi:BuildRequires:	avahi-gobject-devel}
 BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 1:2.44
 BuildRequires:	gtk-doc >= 1.14
@@ -100,7 +103,8 @@ Dokumentacja API biblioteki PhoDAV.
 %setup -q -n phodav-%{version}
 
 %build
-%meson build
+%meson build \
+	%{!?with_avahi:-Davahi=disabled}
 
 %ninja_build -C build
 
@@ -121,7 +125,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/chezdav
 %attr(755,root,root) %{_sbindir}/spice-webdavd
+%if %{with systemd}
 %{systemdunitdir}/spice-webdavd.service
+%endif
 /lib/udev/rules.d/70-spice-webdavd.rules
 %{_mandir}/man1/chezdav.1*
 
