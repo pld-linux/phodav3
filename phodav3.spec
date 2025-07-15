@@ -103,15 +103,15 @@ Dokumentacja API biblioteki PhoDAV.
 %setup -q -n phodav-%{version}
 
 %build
-%meson build \
+%meson \
 	%{!?with_avahi:-Davahi=disabled}
 
-%ninja_build -C build
+%meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%ninja_install -C build
+%meson_install
 
 %find_lang phodav-3.0
 
